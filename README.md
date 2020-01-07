@@ -1,3 +1,3 @@
 # gosrc
 
-This repository is created for learing go source code.
+This repository is created for learning go source code.
