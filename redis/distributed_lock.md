@@ -14,6 +14,8 @@
 
 - 单实例redis
 
+	- 使用lua脚本
+
 ```
 SET resource_name my_random_value NX PX 3000
 ```
@@ -27,5 +29,28 @@ if redis.call("get",KEYS[1]) == ARGV[1] then
 else
     return 0
 end
+```
+
+	- 使用redis事物
+
+```redis
+watch lock_key
+get lock_key
+
+if lock_key == nil||lock_key.expire_time < now {
+	multi
+	set lock_key {expire_time: now}
+	if exec == nil{
+		// 获取锁失败
+		return false
+	} else {
+		return true
+	}
+}else{
+	// 没获取到锁
+	unwatch
+	return 
+}
+
 ```
 - 分布式，Redlock算法，[算法描述](http://redis.cn/topics/distlock.html)、[RedLock安全性](http://antirez.com/news/101)
